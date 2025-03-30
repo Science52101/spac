@@ -42,7 +42,16 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
         {
             if let Some(url) = args.next()
             {
-                spac.fetch(url.as_str())
+                if let Err(err) = spac.fetch(url.as_str())
+                {
+                    println!("Error: Repository could not be cloned.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The repo was cloned successfully!");
+                    Ok(())
+                }
             }
             else
             {
