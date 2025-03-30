@@ -2,7 +2,7 @@ use crate::spac_api::SPac;
 
 impl SPac
 {
-    pub fn clone_repo (&mut self, url: &str) -> Result<(), Box::<dyn std::error::Error>>
+    pub fn fetch (&mut self, url: &str) -> Result<(), Box::<dyn std::error::Error>>
     {
         let name = format!("spac_repos/{}/", url.split('/').last().unwrap_or("default").trim_end_matches(".git"));
 

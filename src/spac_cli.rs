@@ -42,7 +42,7 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
         {
             if let Some(url) = args.next()
             {
-                spac.clone_repo(url.as_str())
+                spac.fetch(url.as_str())
             }
             else
             {
