@@ -15,12 +15,23 @@ impl SPac
             {
                 if let Err(err) = std::fs::create_dir(dir)
                 {
-                    println!("Error: Directory `{dir}` could not be created.");
                     return Err(Box::new(err));
                 }
             }
         }
 
-        Ok(Self { repos: vec![] })
+        let repos : Vec::<String>;
+
+        match std::fs::read_dir("spac_repos")
+        {
+        Ok(rd) =>
+            {
+                repos = rd.map(|x| String::from(x.unwrap().path().to_str().unwrap().trim_start_matches("spac_repos/"))).collect();
+            }
+        Err(err) =>
+            return Err(Box::new(err))
+        }
+
+        Ok(Self { repos })
     }
 }

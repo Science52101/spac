@@ -36,6 +36,7 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
             println!("fetch\tFetches a repository");
             println!("inst\tInstalls a software of a repository");
             println!("del\tDeletes a repository");
+            println!("list\tLists the installed repositories");
             Ok(())
         }
     "fetch" =>
@@ -49,7 +50,7 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
                 }
                 else
                 {
-                    println!("The repo was cloned successfully!");
+                    println!("The repository was cloned successfully!");
                     Ok(())
                 }
             }
@@ -66,7 +67,28 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
         }
     "del" =>
         {
-            println!("`del` is not implemented yet. This is a WIP.");
+            if let Some(name) = args.next()
+            {
+                if let Err(err) = spac.del(name.as_str())
+                {
+                    println!("Error: Repository could not be deleted.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The repository was deleted successfully!");
+                    Ok(())
+                }
+            }
+            else
+            {
+                println!("You must add an url as an argument for fetching a repository.");
+                Err("Missing second argument for `fetch`.".into())
+            }
+        }
+    "list" =>
+        {
+            println!("`list` is not implemented yet. This is a WIP.");
             Err(format!("WIP command").into())
         }
     arg =>
