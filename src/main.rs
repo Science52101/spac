@@ -1,3 +1,4 @@
+mod spac_api;
 
 fn main () -> Result<(), Box<dyn std::error::Error>>
 {
