@@ -1,2 +1,3 @@
 # spac
-Software Packer
+
+`spac` stands for 'Software Packer' or 'Science Packer'.
