@@ -19,11 +19,6 @@ impl SPac
 
     pub fn del (&mut self, name: &str) -> Result<(), Box::<dyn std::error::Error>>
     {
-        for i in self.repos.iter()
-        {
-            println!("{i}");
-        }
-
         if let None = self.repos.iter().find(|x| x.as_str() == name)
         {
             return Err(format!("Repository named {name} not found").into());
