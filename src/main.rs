@@ -61,6 +61,16 @@ fn main () -> Result<(), Box<dyn std::error::Error>>
                 Err("Missing second argument for `fetch`.".into())
             }
         }
+    "inst" =>
+        {
+            println!("`inst` is not implemented yet. This is a WIP.");
+            Err(format!("WIP command").into())
+        }
+    "del" =>
+        {
+            println!("`del` is not implemented yet. This is a WIP.");
+            Err(format!("WIP command").into())
+        }
     arg =>
         {
             println!("{arg} is not a valid argument. Use `help` for a list of arguments.");
