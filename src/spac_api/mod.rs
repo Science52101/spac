@@ -1,24 +1,22 @@
 pub mod repos;
-pub mod install;
+pub mod inst;
 
 pub struct SPac
 {
     repos: Vec::<String>,
-    set_up: Vec::<String>
+    set_up: Vec::<(String, String)>
 }
 
 impl SPac
 {
-    pub fn init () -> Result<Self, Box::<dyn std::error::Error>>
+    pub fn init () -> Result::<Self, Box::<dyn std::error::Error>>
     {
         for dir in ["spac_repos", "spac_set", "spac_tmp"]
         {
             if !std::path::Path::new(dir).exists()
             {
                 if let Err(err) = std::fs::create_dir(dir)
-                {
-                    return Err(Box::new(err));
-                }
+                { return Err(Box::new(err)) }
             }
         }
 
@@ -33,23 +31,21 @@ impl SPac
         let config = config?;
 
         let mut config: Vec::<Vec::<String>> = config
-                                                .split('\n')
-                                                .map(|x| x
-                                                            .trim()
-                                                            .split(',')
-                                                            .map(|y| String::from(y))
-                                                            .filter(|z| z.len() > 0)
-                                                            .collect::<Vec::<String>>()
-                                                    )
-                                                .collect();
+                                                .split('\n').map(|x| x.trim().split(',')
+                                                                        .map(|y| String::from(y))
+                                                                        .filter(|z| z.len() > 0)
+                                                                        .collect::<Vec::<String>>()
+                                                                ).collect();
 
         if config.len() != 2
         { config.resize(2, vec![]); }
 
-        Ok(Self {repos: config[0].clone(), set_up: config[1].clone()})
+        Ok(Self { repos: config[0].clone(), set_up: config[1].clone().iter()
+                                                                .map(|x| (String::from(x.split_once(';').unwrap().0), String::from(x.split_once(';').unwrap().1))
+                                                            ).collect() })
     }
 
-    pub fn update_set (&self) -> Result<(), Box::<dyn std::error::Error>>
+    pub fn update_set (&self) -> Result::<(), Box::<dyn std::error::Error>>
     {
         std::fs::File::create("spac_set/packs.csv")?;
 
@@ -66,7 +62,9 @@ impl SPac
 
         for s in self.set_up.iter()
         {
-            packs.push_str(&s);
+            packs.push_str(&s.0);
+            packs.push(';');
+            packs.push_str(&s.1);
             packs.push(',');
         }
 

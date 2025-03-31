@@ -54,8 +54,24 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
         }
     "inst" =>
         {
-            println!("`inst` is not implemented yet. This is a WIP.");
-            Err(format!("WIP command").into())
+            if let Some(name) = args.next()
+            {
+                if let Err(err) = spac.inst(name.as_str())
+                {
+                    println!("Error: Repository could not be installed.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The repository was installed successfully!");
+                    Ok(())
+                }
+            }
+            else
+            {
+                println!("You must add a fetched repository name as an argument for installing a repository.");
+                Err("Missing second argument for `inst`.".into())
+            }
         }
     "del" =>
         {
@@ -74,7 +90,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
             }
             else
             {
-                println!("You must add an url as an argument for fetching a repository.");
+                println!("You must add a fetched repository name as an argument for deleting a repository.");
                 Err("Missing second argument for `fetch`.".into())
             }
         }
