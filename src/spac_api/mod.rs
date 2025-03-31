@@ -3,6 +3,7 @@ pub mod inst;
 
 pub struct SPac
 {
+    spac_user_dir: String,
     repos: Vec::<String>,
     set_up: Vec::<(String, String)>
 }
@@ -11,21 +12,23 @@ impl SPac
 {
     pub fn init () -> Result::<Self, Box::<dyn std::error::Error>>
     {
+        let spac_user_dir = std::env::var("SCIENCE52101_SPAC_USER_DIR").unwrap_or_else(|_| String::from("."));
+
         for dir in ["spac_repos", "spac_set", "spac_tmp"]
         {
-            if !std::path::Path::new(dir).exists()
+            if !std::path::Path::new(&format!("{spac_user_dir}/{dir}")).exists()
             {
-                if let Err(err) = std::fs::create_dir(dir)
+                if let Err(err) = std::fs::create_dir(format!("{spac_user_dir}/{dir}"))
                 { return Err(Box::new(err)) }
             }
         }
 
-        let mut config = std::fs::read_to_string("spac_set/packs.csv");
+        let mut config = std::fs::read_to_string(format!("{spac_user_dir}/spac_set/packs.csv"));
 
         if let Err(_) = config
         {
-            std::fs::File::create_new("spac_set/packs.csv")?;
-            config = std::fs::read_to_string("spac_set/packs.csv");
+            std::fs::File::create_new(format!("{spac_user_dir}/spac_set/packs.csv"))?;
+            config = std::fs::read_to_string(format!("{spac_user_dir}/spac_set/packs.csv"));
         }
 
         let config = config?;
@@ -40,14 +43,18 @@ impl SPac
         if config.len() != 2
         { config.resize(2, vec![]); }
 
-        Ok(Self { repos: config[0].clone(), set_up: config[1].clone().iter()
-                                                                .map(|x| (String::from(x.split_once(';').unwrap().0), String::from(x.split_once(';').unwrap().1))
-                                                            ).collect() })
+        Ok(Self {
+                spac_user_dir,
+                repos: config[0].clone(),
+                set_up: config[1].clone().iter()
+                                    .map(|x| (String::from(x.split_once(';').unwrap().0), String::from(x.split_once(';').unwrap().1)))
+                                    .collect()
+            })
     }
 
     pub fn update_set (&self) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        std::fs::File::create("spac_set/packs.csv")?;
+        std::fs::File::create(format!("{}/spac_set/packs.csv", self.spac_user_dir))?;
 
         let mut packs = String::new();
 
@@ -70,9 +77,15 @@ impl SPac
 
         packs.pop();
 
-        if let Err(err) = std::fs::write("spac_set/packs.csv", packs.into_bytes())
+        if let Err(err) = std::fs::write(format!("{}/spac_set/packs.csv", self.spac_user_dir), packs.into_bytes())
         { Err(Box::new(err)) }
         else
         { Ok(()) }
+    }
+
+    pub fn set_user_dir (&mut self, value: &str) -> ()
+    {
+        std::env::set_var("SCIENCE52101_SPAC_USER_DIR", value);
+        self.spac_user_dir = String::from(value);
     }
 }
