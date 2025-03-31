@@ -21,7 +21,11 @@ impl SPac
         Err(err) => return Err(Box::new(err))
         }
 
-        self.set_up.push((String::from(name), String::from("")));
+        let run = std::fs::read_to_string(format!("spac_repos/{name}/.spac/run"));
+
+        let run = if let Err(_) = run { String::from("") } else { run? };
+
+        self.set_up.push((String::from(name), run));
 
         Ok(())
     }
