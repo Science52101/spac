@@ -1,5 +1,5 @@
 pub mod repos;
-pub mod install;
+pub mod inst;
 
 pub struct SPac
 {
@@ -9,7 +9,7 @@ pub struct SPac
 
 impl SPac
 {
-    pub fn init () -> Result<Self, Box::<dyn std::error::Error>>
+    pub fn init () -> Result::<Self, Box::<dyn std::error::Error>>
     {
         for dir in ["spac_repos", "spac_set", "spac_tmp"]
         {
@@ -49,7 +49,7 @@ impl SPac
         Ok(Self {repos: config[0].clone(), set_up: config[1].clone()})
     }
 
-    pub fn update_set (&self) -> Result<(), Box::<dyn std::error::Error>>
+    pub fn update_set (&self) -> Result::<(), Box::<dyn std::error::Error>>
     {
         std::fs::File::create("spac_set/packs.csv")?;
 

@@ -2,7 +2,7 @@ use crate::spac_api::SPac;
 
 impl SPac
 {
-    pub fn fetch (&mut self, url: &str) -> Result<(), Box::<dyn std::error::Error>>
+    pub fn fetch (&mut self, url: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
         let name = url.split('/').last().unwrap_or("default").trim_end_matches(".git");
 
@@ -17,7 +17,7 @@ impl SPac
         }
     }
 
-    pub fn del (&mut self, name: &str) -> Result<(), Box::<dyn std::error::Error>>
+    pub fn del (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
         if let None = self.repos.iter().find(|x| x.as_str() == name)
         {
