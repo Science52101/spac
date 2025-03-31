@@ -1,4 +1,5 @@
 pub mod repos;
+pub mod install;
 
 pub struct SPac
 {

@@ -87,6 +87,15 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
 
             Ok(())
         }
+    "listi" =>
+        {
+            for s in spac.listi()
+            {
+                println!("{s}")
+            }
+
+            Ok(())
+        }
     arg =>
         {
             println!("{arg} is not a valid argument. Use `help` for a list of arguments.");
