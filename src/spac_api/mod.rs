@@ -2,7 +2,8 @@ pub mod repos;
 
 pub struct SPac
 {
-    repos: Vec::<String>
+    repos: Vec::<String>,
+    set_up: Vec::<String>
 }
 
 impl SPac
@@ -20,18 +21,59 @@ impl SPac
             }
         }
 
-        let repos : Vec::<String>;
+        let mut config = std::fs::read_to_string("spac_set/packs.csv");
 
-        match std::fs::read_dir("spac_repos")
+        if let Err(_) = config
         {
-        Ok(rd) =>
-            {
-                repos = rd.map(|x| String::from(x.unwrap().path().to_str().unwrap().trim_start_matches("spac_repos/"))).collect();
-            }
-        Err(err) =>
-            return Err(Box::new(err))
+            std::fs::File::create_new("spac_set/packs.csv")?;
+            config = std::fs::read_to_string("spac_set/packs.csv");
         }
 
-        Ok(Self { repos })
+        let config = config?;
+
+        let mut config: Vec::<Vec::<String>> = config
+                                                .split('\n')
+                                                .map(|x| x
+                                                            .trim()
+                                                            .split(',')
+                                                            .map(|y| String::from(y))
+                                                            .filter(|z| z.len() > 0)
+                                                            .collect::<Vec::<String>>()
+                                                    )
+                                                .collect();
+
+        if config.len() != 2
+        { config.resize(2, vec![]); }
+
+        Ok(Self {repos: config[0].clone(), set_up: config[1].clone()})
+    }
+
+    pub fn update_set (&self) -> Result<(), Box::<dyn std::error::Error>>
+    {
+        std::fs::File::create("spac_set/packs.csv")?;
+
+        let mut packs = String::new();
+
+        for s in self.repos.iter()
+        {
+            packs.push_str(&s);
+            packs.push(',');
+        }
+
+        packs.pop();
+        packs.push('\n');
+
+        for s in self.set_up.iter()
+        {
+            packs.push_str(&s);
+            packs.push(',');
+        }
+
+        packs.pop();
+
+        if let Err(err) = std::fs::write("spac_set/packs.csv", packs.into_bytes())
+        { Err(Box::new(err)) }
+        else
+        { Ok(()) }
     }
 }

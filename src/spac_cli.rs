@@ -1,17 +1,8 @@
 use crate::spac_api::SPac;
 
-pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
+pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::Error>>
 {
-    /* SPac Command Line Interface */
-
-    let spac = SPac::init();
-
-    if let Err(err) = spac
-    {
-        return Err(err);
-    }
-
-    let mut spac = spac.unwrap();
+    /* SPac CLI argument executor */
 
     let mut args = std::env::args();
 
@@ -36,7 +27,8 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
             println!("fetch\tFetches a repository");
             println!("inst\tInstalls a software of a repository");
             println!("del\tDeletes a repository");
-            println!("list\tLists the installed repositories");
+            println!("listf\tLists the fetched repositories");
+            println!("listi\tLists the installed repositories");
             Ok(())
         }
     "fetch" =>
@@ -86,10 +78,14 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
                 Err("Missing second argument for `fetch`.".into())
             }
         }
-    "list" =>
+    "listf" =>
         {
-            println!("`list` is not implemented yet. This is a WIP.");
-            Err(format!("WIP command").into())
+            for s in spac.listf()
+            {
+                println!("{s}")
+            }
+
+            Ok(())
         }
     arg =>
         {
@@ -97,4 +93,23 @@ pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
             Err(format!("Unmatched argument `{arg}`").into())
         }
     }
+}
+
+pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
+{
+    /* SPac Command Line Interface */
+
+    let spac = SPac::init();
+
+    if let Err(err) = spac
+    {
+        return Err(err);
+    }
+
+    let mut spac = spac.unwrap();
+
+    if let Err(err) = spac_execute_args(&mut spac)
+    { return Err(err); }
+
+    spac.update_set()
 }

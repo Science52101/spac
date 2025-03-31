@@ -4,15 +4,15 @@ impl SPac
 {
     pub fn fetch (&mut self, url: &str) -> Result<(), Box::<dyn std::error::Error>>
     {
-        let name = format!("spac_repos/{}/", url.split('/').last().unwrap_or("default").trim_end_matches(".git"));
+        let name = url.split('/').last().unwrap_or("default").trim_end_matches(".git");
 
-        if let Err(err) = git2::Repository::clone(&url, &name)
+        if let Err(err) = git2::Repository::clone(&url, format!("spac_repos/{name}/"))
         {
             Err(Box::new(err))
         }
         else
         {
-            self.repos.push(name);
+            self.repos.push(String::from(name));
             Ok(())
         }
     }
@@ -30,7 +30,14 @@ impl SPac
         }
         else
         {
+            if !std::path::Path::new("spac_repos/{name}/").exists()
+            { self.repos.retain(|x| x != name); }
             Ok(())
         }
+    }
+
+    pub fn listf (&self) -> Vec<String>
+    {
+        self.repos.clone()
     }
 }
