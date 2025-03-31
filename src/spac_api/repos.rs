@@ -19,7 +19,7 @@ impl SPac
 
     pub fn del (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        if let None = self.repos.iter().find(|x| x.as_str() == name)
+        if let None = self.repos.iter().find(|&x| x == name)
         { return Err(format!("Repository named {name} not found").into()) }
 
         if let Err(err) = std::fs::remove_dir_all(format!("spac_repos/{name}/"))
@@ -29,7 +29,10 @@ impl SPac
         else
         {
             if !std::path::Path::new("spac_repos/{name}/").exists()
-            { self.repos.retain(|x| x != name); }
+            {
+                self.repos.retain(|x| x != name);
+                self.set_up.retain(|x| x.0 != name);
+            }
             Ok(())
         }
     }

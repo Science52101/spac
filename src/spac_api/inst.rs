@@ -2,9 +2,9 @@ use crate::spac_api::SPac;
 
 impl SPac
 {
-    pub fn inst (&self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
+    pub fn inst (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        if let None = self.repos.iter().find(|x| x.as_str() == name)
+        if let None = self.repos.iter().find(|&x| x == name)
         { return Err(format!("Repository named {name} not found").into()) }
 
         let inst_c = format!("cd ./spac_repos/{name}/ && . ./.spac/inst_{}", std::env::consts::OS);
@@ -21,11 +21,13 @@ impl SPac
         Err(err) => return Err(Box::new(err))
         }
 
+        self.set_up.push((String::from(name), String::from("")));
+
         Ok(())
     }
 
     pub fn listi (&self) -> Vec<String>
     {
-        self.set_up.clone()
+        self.set_up.clone().iter().map(|x| x.0.clone()).collect()
     }
 }

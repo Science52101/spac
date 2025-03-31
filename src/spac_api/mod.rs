@@ -4,7 +4,7 @@ pub mod inst;
 pub struct SPac
 {
     repos: Vec::<String>,
-    set_up: Vec::<String>
+    set_up: Vec::<(String, String)>
 }
 
 impl SPac
@@ -40,7 +40,9 @@ impl SPac
         if config.len() != 2
         { config.resize(2, vec![]); }
 
-        Ok(Self {repos: config[0].clone(), set_up: config[1].clone()})
+        Ok(Self { repos: config[0].clone(), set_up: config[1].clone().iter()
+                                                                .map(|x| (String::from(x.split_once(';').unwrap().0), String::from(x.split_once(';').unwrap().1))
+                                                            ).collect() })
     }
 
     pub fn update_set (&self) -> Result::<(), Box::<dyn std::error::Error>>
@@ -60,7 +62,9 @@ impl SPac
 
         for s in self.set_up.iter()
         {
-            packs.push_str(&s);
+            packs.push_str(&s.0);
+            packs.push(';');
+            packs.push_str(&s.1);
             packs.push(',');
         }
 
