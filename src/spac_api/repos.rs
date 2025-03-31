@@ -20,9 +20,7 @@ impl SPac
     pub fn del (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
         if let None = self.repos.iter().find(|x| x.as_str() == name)
-        {
-            return Err(format!("Repository named {name} not found").into());
-        }
+        { return Err(format!("Repository named {name} not found").into()) }
 
         if let Err(err) = std::fs::remove_dir_all(format!("spac_repos/{name}/"))
         {

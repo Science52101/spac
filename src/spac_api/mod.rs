@@ -16,9 +16,7 @@ impl SPac
             if !std::path::Path::new(dir).exists()
             {
                 if let Err(err) = std::fs::create_dir(dir)
-                {
-                    return Err(Box::new(err));
-                }
+                { return Err(Box::new(err)) }
             }
         }
 
@@ -33,15 +31,11 @@ impl SPac
         let config = config?;
 
         let mut config: Vec::<Vec::<String>> = config
-                                                .split('\n')
-                                                .map(|x| x
-                                                            .trim()
-                                                            .split(',')
-                                                            .map(|y| String::from(y))
-                                                            .filter(|z| z.len() > 0)
-                                                            .collect::<Vec::<String>>()
-                                                    )
-                                                .collect();
+                                                .split('\n').map(|x| x.trim().split(',')
+                                                                        .map(|y| String::from(y))
+                                                                        .filter(|z| z.len() > 0)
+                                                                        .collect::<Vec::<String>>()
+                                                                ).collect();
 
         if config.len() != 2
         { config.resize(2, vec![]); }
