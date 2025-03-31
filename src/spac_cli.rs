@@ -1,6 +1,6 @@
 use crate::spac_api::SPac;
 
-pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::Error>>
+pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error::Error>>
 {
     /* SPac CLI argument executor */
 
@@ -29,6 +29,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
             println!("del\tDeletes a repository");
             println!("listf\tLists the fetched repositories");
             println!("listi\tLists the installed repositories");
+            println!("sud\tSets the user directory");
             Ok(())
         }
     "fetch" =>
@@ -97,20 +98,29 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
     "listf" =>
         {
             for s in spac.listf()
-            {
-                println!("{s}")
-            }
+            { println!("{s}") }
 
             Ok(())
         }
     "listi" =>
         {
             for s in spac.listi()
-            {
-                println!("{s}")
-            }
+            { println!("{s}") }
 
             Ok(())
+        }
+    "sud" =>
+        {
+            if let Some(value) = args.next()
+            {
+                spac.set_user_dir(value.as_str());
+                Ok(())
+            }
+            else
+            {
+                println!("You must add a directory name as an argument for setting the SPac user directory.");
+                Err("Missing second argument for `sud`.".into())
+            }
         }
     arg =>
         {
@@ -120,7 +130,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
     }
 }
 
-pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
+pub fn spac_cli () -> Result::<(), Box::<dyn std::error::Error>>
 {
     /* SPac Command Line Interface */
 
