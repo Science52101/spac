@@ -113,8 +113,16 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
         {
             if let Some(value) = args.next()
             {
-                spac.set_user_dir(value.as_str());
-                Ok(())
+                if let Err(err) = spac.set_user_dir(value.as_str())
+                {
+                    println!("Error: The user directory could not be changed.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The user directory was changed successfully!");
+                    Ok(())
+                }
             }
             else
             {

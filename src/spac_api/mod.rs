@@ -12,9 +12,21 @@ impl SPac
 {
     pub fn init () -> Result::<Self, Box::<dyn std::error::Error>>
     {
-        let spac_user_dir = std::env::var("SCIENCE52101_SPAC_USER_DIR").unwrap_or_else(|_| String::from("."));
+        let sud_path = format!("{}/.spac_user_dir", if cfg!(target_os = "windows") { std::env::var("APPDATA") }
+                                                     else { std::env::var("HOME") }? );
 
-        for dir in ["spac_repos", "spac_set", "spac_tmp"]
+        let mut spac_user_dir = std::fs::read_to_string(&sud_path);
+
+        if let Err(_) = spac_user_dir
+        {
+            std::fs::File::create_new(&sud_path)?;
+            std::fs::write(&sud_path, b".")?;
+            spac_user_dir = std::fs::read_to_string(&sud_path);
+        }
+
+        let spac_user_dir = spac_user_dir?.trim().to_string();
+
+        for dir in ["", "spac_repos", "spac_set", "spac_tmp"]
         {
             if !std::path::Path::new(&format!("{spac_user_dir}/{dir}")).exists()
             {
@@ -33,12 +45,12 @@ impl SPac
 
         let config = config?;
 
-        let mut config: Vec::<Vec::<String>> = config
-                                                .split('\n').map(|x| x.trim().split(',')
+        let mut config: Vec::<Vec::<String>> = config.split('\n').map(|x| x
+                                                                        .trim().split(',')
                                                                         .map(|y| String::from(y))
                                                                         .filter(|z| z.len() > 0)
                                                                         .collect::<Vec::<String>>()
-                                                                ).collect();
+                                                                    ).collect();
 
         if config.len() != 2
         { config.resize(2, vec![]); }
@@ -83,9 +95,16 @@ impl SPac
         { Ok(()) }
     }
 
-    pub fn set_user_dir (&mut self, value: &str) -> ()
+    pub fn set_user_dir (&mut self, value: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        std::env::set_var("SCIENCE52101_SPAC_USER_DIR", value);
-        self.spac_user_dir = String::from(value);
+        let sud_path = std::fs::read_to_string(format!("{}/.spac_user_dir", if cfg!(target_os = "windows") { std::env::var("APPDATA") }
+                                                                             else { std::env::var("HOME") }? ))?;
+
+        std::fs::File::create(&sud_path)?;
+
+        if let Err(err) = std::fs::write(sud_path, value.to_string().into_bytes())
+        { Err(Box::new(err)) }
+        else
+        { Ok(()) }
     }
 }

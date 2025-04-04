@@ -6,6 +6,9 @@ impl SPac
     {
         let name = url.split('/').last().unwrap_or("default").trim_end_matches(".git");
 
+        if name.chars().any(|c| c == ',' || c == ';')
+        { return Err("Package is not compatible: name contains ',' or ';'.".into()) }
+
         if let Err(err) = git2::Repository::clone(&url, format!("{}/spac_repos/{name}/", self.spac_user_dir))
         {
             Err(Box::new(err))
