@@ -29,7 +29,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
             println!("del\tDeletes a repository");
             println!("listf\tLists the fetched repositories");
             println!("listi\tLists the installed repositories");
-            println!("sud\tSets the user directory");
+            println!("sud\tGets (or sets if there is an argument) the user directory");
             Ok(())
         }
     "fetch" =>
@@ -126,8 +126,8 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
             }
             else
             {
-                println!("You must add a directory name as an argument for setting the SPac user directory.");
-                Err("Missing second argument for `sud`.".into())
+                println!("{}", spac.get_user_dir());
+                Ok(())
             }
         }
     arg =>

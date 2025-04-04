@@ -97,8 +97,8 @@ impl SPac
 
     pub fn set_user_dir (&mut self, value: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        let sud_path = std::fs::read_to_string(format!("{}/.spac_user_dir", if cfg!(target_os = "windows") { std::env::var("APPDATA") }
-                                                                             else { std::env::var("HOME") }? ))?;
+        let sud_path = format!("{}/.spac_user_dir", if cfg!(target_os = "windows") { std::env::var("APPDATA") }
+                                                     else { std::env::var("HOME") }? );
 
         std::fs::File::create(&sud_path)?;
 
@@ -106,5 +106,10 @@ impl SPac
         { Err(Box::new(err)) }
         else
         { Ok(()) }
+    }
+
+    pub fn get_user_dir (&self) -> String
+    {
+        self.spac_user_dir.clone()
     }
 }
