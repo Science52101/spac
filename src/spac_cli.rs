@@ -1,6 +1,6 @@
 use crate::spac_api::SPac;
 
-pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::Error>>
+pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error::Error>>
 {
     /* SPac CLI argument executor */
 
@@ -29,6 +29,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
             println!("del\tDeletes a repository");
             println!("listf\tLists the fetched repositories");
             println!("listi\tLists the installed repositories");
+            println!("sud\tGets (or sets if there is an argument) the user directory");
             Ok(())
         }
     "fetch" =>
@@ -91,26 +92,43 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
             else
             {
                 println!("You must add a fetched repository name as an argument for deleting a repository.");
-                Err("Missing second argument for `fetch`.".into())
+                Err("Missing second argument for `del`.".into())
             }
         }
     "listf" =>
         {
             for s in spac.listf()
-            {
-                println!("{s}")
-            }
+            { println!("{s}") }
 
             Ok(())
         }
     "listi" =>
         {
             for s in spac.listi()
-            {
-                println!("{s}")
-            }
+            { println!("{s}") }
 
             Ok(())
+        }
+    "sud" =>
+        {
+            if let Some(value) = args.next()
+            {
+                if let Err(err) = spac.set_user_dir(value.as_str())
+                {
+                    println!("Error: The user directory could not be changed.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The user directory was changed successfully!");
+                    Ok(())
+                }
+            }
+            else
+            {
+                println!("{}", spac.get_user_dir());
+                Ok(())
+            }
         }
     arg =>
         {
@@ -120,7 +138,7 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result<(), Box::<dyn std::error::E
     }
 }
 
-pub fn spac_cli () -> Result<(), Box::<dyn std::error::Error>>
+pub fn spac_cli () -> Result::<(), Box::<dyn std::error::Error>>
 {
     /* SPac Command Line Interface */
 
