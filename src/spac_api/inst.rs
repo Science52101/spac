@@ -9,12 +9,10 @@ impl SPac
 
         let inst_c = format!("cd {}/spac_repos/{name}/ && . ./.spac/inst_{}", self.spac_user_dir, std::env::consts::OS);
 
-        println!("{inst_c}");
-
         match if cfg!(target_os = "windows")
-                            { std::process::Command::new("cmd").arg("/C").arg(inst_c).status() }
-                            else
-                            { std::process::Command::new("sh").arg("-c").arg(inst_c).status() }
+                { std::process::Command::new("cmd").arg("/C").arg(inst_c).status() }
+                else
+                { std::process::Command::new("sh").arg("-c").arg(inst_c).status() }
         {
         Ok(status) if status.success() => (),
         Ok(status) => return Err(format!("Instalation commands failed with status code {status}").into()),
@@ -31,6 +29,39 @@ impl SPac
         self.set_up.push((String::from(name), run_command));
 
         Ok(())
+    }
+
+    pub fn run (&self, command: &str, args: &Vec::<String>) -> Result::<(), Box::<dyn std::error::Error>>
+    {
+        if let Some((name, _)) = self.set_up.iter().find(|x| x.1.as_str() == command)
+        {
+            let run = std::fs::read_to_string(format!("{}/spac_repos/{name}/.spac/run", self.spac_user_dir));
+
+            if let Err(err) = run
+            { return Err(Box::new(err)); }
+
+            let mut run = run?;
+
+            for arg in args
+            {
+                run.push(' ');
+                run.push_str(arg);
+            }
+
+            match if cfg!(target_os = "windows")
+                    { std::process::Command::new("cmd").arg("/C").arg(run).status() }
+                    else
+                    { std::process::Command::new("sh").arg("-c").arg(run).status() }
+            {
+            Ok(status) if status.success() => (),
+            Ok(status) => return Err(format!("Run command(s) failed with status code {status}").into()),
+            Err(err) => return Err(Box::new(err))
+            }
+
+            Ok(())
+        }
+        else
+        { Err("Command not found for installed packages.".into()) }
     }
 
     pub fn listi (&self) -> Vec<String>
