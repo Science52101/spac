@@ -40,7 +40,7 @@ impl SPac
             if let Err(err) = run_plat
             { return Err(Box::new(err)); }
 
-            let mut run_plat = run_plat?.trim().replace("<THIS>", format!("{}/spac_repos/{name}", self.spac_user_dir).as_str()).to_string();
+            let mut run_plat = run_plat?.trim().replace("<REPO>", format!("{}/spac_repos/{name}", self.spac_user_dir).as_str()).to_string();
 
             for arg in args
             {
