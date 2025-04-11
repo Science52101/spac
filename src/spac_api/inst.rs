@@ -40,7 +40,11 @@ impl SPac
             if let Err(err) = run_plat
             { return Err(Box::new(err)); }
 
-            let mut run_plat = run_plat?.trim().replace("<REPO>", format!("{}/spac_repos/{name}", self.spac_user_dir).as_str()).to_string();
+            let mut run_plat = run_plat?.trim()
+                                            .replace("<REPO>", format!("{}/spac_repos/{name}", self.spac_user_dir).as_str())
+                                            .replace("<SPAC_REPOS>", format!("{}/spac_repos/", self.spac_user_dir).as_str())
+                                            .replace("<SPAC_TMP>", format!("{}/spac_tmp/", self.spac_user_dir).as_str())
+                                                .to_string();
 
             for arg in args
             {
@@ -65,6 +69,8 @@ impl SPac
             Ok(_) => (),
             Err(err) => return Err(Box::new(err))
             }
+
+            std::fs::File::create(format!("{}/spac_tmp/run", self.spac_user_dir))?;
 
             Ok(())
         }
