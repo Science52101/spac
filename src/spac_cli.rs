@@ -28,8 +28,9 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
             println!("inst\tInstalls a software of a repository");
             println!("del\tDeletes a repository");
             println!("listf\tLists the fetched repositories");
-            println!("listi\tLists the installed repositories");
+            println!("listi\tLists the installed repositories and their commands");
             println!("sud\tGets (or sets if there is an argument) the user directory");
+            println!("run\t(aka. run) Runs an installed package by its command");
             Ok(())
         }
     "fetch" =>
@@ -95,8 +96,30 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
                 Err("Missing second argument for `del`.".into())
             }
         }
+    "run" | "r" =>
+        {
+            if let Some(command) = args.next()
+            {
+                if let Err(err) = spac.run(command.as_str(), &args.collect())
+                {
+                    println!("Error: The run command could not be executed.");
+                    Err(err)
+                }
+                else
+                {
+                    Ok(())
+                }
+            }
+            else
+            {
+                println!("You must add an installed repository name as an argument for running a repository.");
+                Err("Missing second argument for `run`.".into())
+            }
+        }
+
     "listf" =>
         {
+            println!("Fetched repos: (name)");
             for s in spac.listf()
             { println!("{s}") }
 
@@ -104,8 +127,9 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
         }
     "listi" =>
         {
+            println!("Installed repos: (name, command)");
             for s in spac.listi()
-            { println!("{s}") }
+            { println!("{}, {}", s.0, s.1) }
 
             Ok(())
         }
