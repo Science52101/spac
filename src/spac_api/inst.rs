@@ -7,6 +7,9 @@ impl SPac
         if let None = self.repos.iter().find(|&x| x == name)
         { return Err(format!("Repository named {name} not found").into()) }
 
+        if let Some(_) = self.set_up.iter().find(|&x| x.1 == name)
+        { return Err(format!("Repository named {name} is already installed").into()) }
+
         let inst_c = format!("cd {}/spac_repos/{name}/ && . ./.spac/inst_{}", self.spac_user_dir, std::env::consts::OS);
 
         match if cfg!(target_os = "windows")

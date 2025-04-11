@@ -6,6 +6,9 @@ impl SPac
     {
         let name = url.split('/').last().unwrap_or("default").trim_end_matches(".git");
 
+        if let Some(_) = self.repos.iter().find(|&x| x == name)
+        { return Err(format!("Repository named {name} is already fetched").into()) }
+
         if name.chars().any(|c| c == ',' || c == ';')
         { return Err("Package is not compatible: name contains ',' or ';'.".into()) }
 
