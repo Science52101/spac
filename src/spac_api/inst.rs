@@ -78,8 +78,8 @@ impl SPac
         { Err("Command not found for installed packages.".into()) }
     }
 
-    pub fn listi (&self) -> Vec<String>
+    pub fn listi (&self) -> Vec<(String, String)>
     {
-        self.set_up.clone().iter().map(|x| x.0.clone()).collect()
+        self.set_up.clone()
     }
 }
