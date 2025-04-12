@@ -34,6 +34,25 @@ impl SPac
         Ok(())
     }
 
+    pub fn upd (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
+    {
+        if let None = self.repos.iter().find(|&x| x == name)
+        { return Err(format!("Repository named {name} not found").into()) }
+
+        let url = git2::Repository::open(format!("{}/spac_repos/{name}", self.spac_user_dir))?;
+        let url = url.find_remote("origin")?;
+        let url = url.url().unwrap();
+
+        for res in [
+                        self.del(name),
+                        self.fetch(url),
+                        self.inst(name)
+                    ]
+        { if let Err(err) = res { return Err(err) } }
+
+        Ok(())
+    }
+
     pub fn run (&self, command: &str, args: &Vec::<String>) -> Result::<(), Box::<dyn std::error::Error>>
     {
         if let Some((name, _)) = self.set_up.iter().find(|x| x.1.as_str() == command)
