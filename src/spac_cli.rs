@@ -25,8 +25,9 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
             println!("Please check the available commands:");
             println!("help\tOutputs this list of commands");
             println!("fetch\tFetches a repository");
-            println!("inst\tInstalls a software of a repository");
+            println!("inst\tInstalls a repository");
             println!("del\tDeletes a repository");
+            println!("upd\tUpdates a repository: del + fetch + inst (if installed)");
             println!("listf\tLists the fetched repositories");
             println!("listi\tLists the installed repositories and their commands");
             println!("sud\tGets (or sets if there is an argument) the user directory");
@@ -94,6 +95,27 @@ pub fn spac_execute_args (spac: &mut SPac) -> Result::<(), Box::<dyn std::error:
             {
                 println!("You must add a fetched repository name as an argument for deleting a repository.");
                 Err("Missing second argument for `del`.".into())
+            }
+        }
+    "upd" =>
+        {
+            if let Some(name) = args.next()
+            {
+                if let Err(err) = spac.upd(name.as_str())
+                {
+                    println!("Error: Repository could not be updated.");
+                    Err(err)
+                }
+                else
+                {
+                    println!("The repository was updated successfully!");
+                    Ok(())
+                }
+            }
+            else
+            {
+                println!("You must add a fetched repository name as an argument for updating a repository.");
+                Err("Missing second argument for `upd`.".into())
             }
         }
     "run" | "r" =>

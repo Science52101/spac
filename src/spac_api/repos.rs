@@ -6,6 +6,9 @@ impl SPac
     {
         let name = url.split('/').last().unwrap_or("default").trim_end_matches(".git");
 
+        if self.repos.iter().any(|x| x == name)
+        { return Err(format!("Repository named {name} is already fetched").into()) }
+
         if name.chars().any(|c| c == ',' || c == ';')
         { return Err("Package is not compatible: name contains ',' or ';'.".into()) }
 
@@ -22,7 +25,7 @@ impl SPac
 
     pub fn del (&mut self, name: &str) -> Result::<(), Box::<dyn std::error::Error>>
     {
-        if let None = self.repos.iter().find(|&x| x == name)
+        if !self.repos.iter().any(|x| x == name)
         { return Err(format!("Repository named {name} not found").into()) }
 
         if let Err(err) = std::fs::remove_dir_all(format!("{}/spac_repos/{name}/", self.spac_user_dir))
