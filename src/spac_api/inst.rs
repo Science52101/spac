@@ -7,7 +7,7 @@ impl SPac
         if let None = self.repos.iter().find(|&x| x == name)
         { return Err(format!("Repository named {name} not found").into()) }
 
-        if let Some(_) = self.set_up.iter().find(|&x| x.1 == name)
+        if let Some(_) = self.set_up.iter().find(|&x| x.0 == name)
         { return Err(format!("Repository named {name} is already installed").into()) }
 
         let inst_c = format!("cd {}/spac_repos/{name}/ && . ./.spac/inst_{}", self.spac_user_dir, std::env::consts::OS);
@@ -43,7 +43,7 @@ impl SPac
         let url = url.find_remote("origin")?;
         let url = url.url().unwrap();
 
-        let installed = self.set_up.iter().any(|x| x.1 == name);
+        let installed = self.set_up.iter().any(|x| x.0 == name);
 
         for res in [
                         self.del(name),
@@ -77,8 +77,6 @@ impl SPac
                 run_plat.push(' ');
                 run_plat.push_str(arg);
             }
-
-            println!("{run_plat}");
 
             std::fs::File::create(format!("{}/spac_tmp/run", self.spac_user_dir))?;
 
