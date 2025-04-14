@@ -1,4 +1,4 @@
 # The SPac Documentation
-## Installing SPac
+## 2. Setting Up
 
 ...
