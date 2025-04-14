@@ -1,3 +1,4 @@
+<image src = './docs/spac_logo.png' alt = 'SPac logo' />
 # `spac`
 
 SPac stands for 'Software Packer' or 'Science Packer'.
