@@ -1,8 +1,8 @@
 <h1 align = center>
 <image src = './docs/spac_logo.png' width = 200 alt = 'SPac logo' />
-</h1>
 
-# `spac`
+<code>spac</code>
+</h1>
 
 SPac stands for 'Software Packer' or 'Science Packer'.
 
