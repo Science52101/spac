@@ -1,5 +1,5 @@
 <h1 align = center>
-<image src = './docs/spac_logo.png' width = 200 alt = 'SPac logo' />
+<image src = './docs/spac_logo.png' width = 86 alt = 'SPac logo' />
 
 <code>spac</code>
 </h1>
